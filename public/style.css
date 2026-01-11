@@ -1,0 +1,300 @@
+:root {
+  --header-height: 72px;
+  --header-bg: #554A9D;
+  --header-inner-bg: #3f3680;
+  --primary-color: #554A9D;
+  --text-color: #222;
+  --bg-color: #f5f5f5;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Work Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* ================= Header ================= */
+.header {
+  height: var(--header-height);
+  background-color: var(--header-bg);
+  border-bottom: 2px solid #ddd;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 0 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-circle {
+  background-color: var(--header-inner-bg);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+}
+
+.logo h2 {
+  color: white;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+/* Register Button in Header */
+.register-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 8px 15px;
+  border-radius: 20px;
+  transition: background 0.3s;
+}
+
+.register-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.user img {
+  width: 40px;
+  height: auto;
+}
+
+/* ================= Main Content ================= */
+.main {
+  padding: 25px 20px;
+  margin-top: var(--header-height); /* เว้นที่ให้ Header */
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Patient Summary Section */
+.patient-summary {
+  margin-bottom: 30px;
+}
+
+.patient-summary h2 {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.total {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.summary-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.box {
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  min-width: 160px;
+  flex: 1;
+  border: 2px solid #ccc;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.box p {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.box span {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* Color-coded boxes */
+.box.critical { border-color: #dc3545; color: #dc3545; }
+.box.urgent { border-color: #fd7e14; color: #fd7e14; }
+.box.mild { border-color: #28a745; color: #28a745; }
+.box.minor { border-color: #007bff; color: #007bff; }
+.box.deceased { border-color: #343a40; color: #343a40; }
+
+/* ================= Controls & Search ================= */
+.patient-table-container {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.controls-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+#searchForm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#searchInput {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* Button Styles */
+.search__button, .clear__button {
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
+}
+
+.search__button {
+  background-color: var(--primary-color);
+}
+.search__button:hover {
+  background-color: #4b36a8;
+}
+
+.clear__button {
+  background-color: crimson;
+}
+.clear__button:hover {
+  background-color: #b30000;
+}
+
+/* ================= Table Styles ================= */
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px; /* ป้องกันตารางบีบเกินไป */
+}
+
+th, td {
+  padding: 12px 15px;
+  border: 1px solid #eee;
+  text-align: center;
+  vertical-align: middle;
+}
+
+thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #444;
+  border-bottom: 2px solid #ddd;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+tbody tr:hover {
+  background-color: #f0f4ff;
+}
+
+/* Status Update Controls in Table */
+.status-select {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.85rem;
+  margin-right: 5px;
+}
+
+.update-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.update-btn:hover {
+  background-color: #218838;
+}
+
+/* ================= Responsive ================= */
+@media screen and (max-width: 768px) {
+  .header-content {
+      flex-direction: column;
+      gap: 15px;
+      padding: 15px;
+  }
+  
+  .header {
+      height: auto;
+      position: relative;
+  }
+
+  .main {
+      margin-top: 0;
+  }
+
+  .controls-area {
+      flex-direction: column;
+      align-items: stretch;
+  }
+
+  #searchForm {
+      flex-direction: column;
+      align-items: stretch;
+  }
+
+  .summary-boxes {
+      flex-direction: column;
+  }
+  
+  .box {
+      width: 100%;
+  }
+}

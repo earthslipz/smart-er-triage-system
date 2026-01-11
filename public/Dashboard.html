@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triage System Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-content">
+        <div class="header-left">
+            <div class="logo-circle" aria-hidden="true">ER</div>
+            <div class="logo">
+                <h2>Triage System</h2>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <a href="form.html" class="register-btn" role="button">
+                <span class="user-icon">📝</span>
+                <span>Register Patient</span>
+            </a>
+            <div class="user">
+                <img src="https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png" alt="User Icon">
+            </div>
+        </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="patient-summary">
+      <h2>Patient Overview</h2>
+      <p class="total">Total patients: <span id="totalPatients">0</span></p>
+      
+      <div class="summary-boxes">
+        <div class="box critical">
+          <p>Critical (RED)</p>
+          <span id="criticalCount">0</span>
+        </div>
+        <div class="box urgent">
+          <p>Urgent (ORANGE/YELLOW)</p>
+          <span id="urgentCount">0</span>
+        </div>
+        <div class="box mild">
+          <p>Mild (GREEN)</p>
+          <span id="mildCount">0</span>
+        </div>
+        <div class="box minor">
+          <p>Minor (BLUE)</p>
+          <span id="minorCount">0</span>
+        </div>
+        <div class="box deceased">
+          <p>Deceased</p>
+          <span id="deceasedCount">0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="patient-table-container">
+      <div class="controls-area">
+          <div class="search-section">
+            <form id="searchForm">
+                <label for="searchInput">Search:</label>
+                <input type="text" id="searchInput" placeholder="ID, Name, Symptom" />
+                <button type="submit" class="search__button">Search</button>
+            </form>
+          </div>
+          </div>
+
+      <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Priority</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Triage</th>
+                <th>Gender</th>
+                <th>Score</th>
+                <th>Symptom</th>
+                <th>Status / Action</th>
+                <th>Last Updated</th>
+              </tr>
+            </thead>
+            <tbody id="patientTable">
+              </tbody>
+          </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

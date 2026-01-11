@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronic Medical Record (EMR) - Doctor View</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #554A9D;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --text-muted: #666;
+            --border-color: #e0e0e0;
+
+            /* Triage Colors */
+            --color-red: #dc3545;
+            --color-orange: #fd7e14;
+            --color-yellow: #d39e00;
+            --color-green: #28a745;
+            --color-blue: #007bff;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif; /* Sarabun is excellent for reading long text */
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-title h1 {
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+        .header-title p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: 'Kanit', sans-serif;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* --- Main Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Left: Clinical Data, Right: Doctor Actions */
+            gap: 25px;
+        }
+
+        /* --- Cards --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-family: 'Kanit', sans-serif;
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* --- Patient Banner --- */
+        .patient-header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .patient-info h1 { margin: 0; font-family: 'Kanit', sans-serif; font-size: 1.8rem; }
+        .patient-meta { color: var(--text-muted); font-size: 1rem; margin-top: 5px; }
+        
+        .triage-badge {
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            text-align: right;
+        }
+        .triage-badge .level { font-size: 1.5rem; font-weight: bold; display: block; }
+        .triage-badge .score { font-size: 0.9rem; opacity: 0.9; }
+
+        /* --- Vitals Grid --- */
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        .vital-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+        .vital-label { font-size: 0.85rem; color: #777; display: block; margin-bottom: 5px; }
+        .vital-value { font-size: 1.4rem; font-weight: 600; color: #333; }
+        .vital-unit { font-size: 0.9rem; color: #999; }
+
+        /* --- AI Analysis Section --- */
+        .ai-box {
+            background-color: #f0f4ff;
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .ai-confidence { float: right; font-weight: bold; color: var(--primary-color); }
+        .reasoning-list { padding-left: 20px; margin-bottom: 0; }
+        .reasoning-list li { margin-bottom: 5px; color: #444; }
+
+        /* --- Doctor Actions (Right Column) --- */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
+        textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        textarea:focus, select:focus { outline: none; border-color: var(--primary-color); }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .btn-save { background-color: var(--primary-color); color: white; }
+        .btn-save:hover { background-color: #453a85; }
+
+        .btn-discharge { background-color: var(--color-green); color: white; }
+        .btn-discharge:hover { background-color: #218838; }
+
+        .btn-deceased { background-color: #333; color: white; margin-top: 20px;}
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .vitals-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+        <div class="header-title">
+            <h1>Physician Portal</h1>
+            <p>Patient Detail View</p>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="card patient-header" id="patientHeader">
+            <div class="patient-info">
+                <h1 id="ptName">Loading Patient...</h1>
+                <div class="patient-meta">
+                    ID: <span id="ptID">-</span> | 
+                    Gender: <span id="ptSex">-</span> | 
+                    DOB: <span id="ptDOB">-</span>
+                </div>
+            </div>
+            <div class="triage-badge" id="triageBadge">
+                <span class="level" id="ptLevel">-</span>
+                <span class="score" id="ptScore">Score: -</span>
+            </div>
+        </div>
+
+        <div class="clinical-col">
+            
+            <div class="card">
+                <h2>Vital Signs Assessment</h2>
+                <div class="vitals-grid">
+                    <div class="vital-item">
+                        <span class="vital-label">Blood Pressure</span>
+                        <span class="vital-value" id="vBP">-</span>
+                        <span class="vital-unit">mmHg</span>
+                    </div>
+                    <div class="vital-item">
+                        <span class="vital-label">Heart Rate</span>
+                        <span class="vital-value" id="vHR">-</span>
+                        <span class="vital-unit">bpm</span>
+                    </div>
+                    <div class="vital-item">
+                        <span class="vital-label">SpO₂</span>
+                        <span class="vital-value" id="vO2">-</span>
+                        <span class="vital-unit">%</span>
+                    </div>
+                    <div class="vital-item">
+                        <span class="vital-label">Temp</span>
+                        <span class="vital-value" id="vTemp">-</span>
+                        <span class="vital-unit">°C</span>
+                    </div>
+                    <div class="vital-item">
+                        <span class="vital-label">Resp. Rate</span>
+                        <span class="vital-value" id="vRR">-</span>
+                        <span class="vital-unit">/min</span>
+                    </div>
+                    <div class="vital-item">
+                        <span class="vital-label">GCS</span>
+                        <span class="vital-value" id="vGCS">-</span>
+                        <span class="vital-unit">/15</span>
+                    </div>
+                    <div class="vital-item">
+                        <span class="vital-label">Pain Score</span>
+                        <span class="vital-value" id="vPain">-</span>
+                        <span class="vital-unit">/10</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>AI Clinical Decision Support</h2>
+                <div class="ai-box">
+                    <div style="margin-bottom: 10px;">
+                        <strong>Predicted Condition:</strong> 
+                        <span id="aiDisease" style="font-size: 1.1rem; color: #333;">-</span>
+                        <span id="aiConf" class="ai-confidence">-</span>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
+                    <strong>Detailed Symptoms:</strong>
+                    <p id="ptSymptoms" style="color: #555; font-style: italic; margin-top: 5px;">-</p>
+                    
+                    <strong>System Reasoning:</strong>
+                    <ul id="triageReasoning" class="reasoning-list">
+                        <li>-</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="action-col">
+            <div class="card">
+                <h2>Medical Orders</h2>
+                
+                <div class="form-group">
+                    <label>Current Status</label>
+                    <select id="statusSelect">
+                        <option value="Waiting">Waiting</option>
+                        <option value="Under Treatment">Under Treatment</option>
+                        <option value="Transferred">Transferred</option>
+                        <option value="Discharged">Discharged</option>
+                        <option value="Deceased">Deceased</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Doctor's Notes / Treatment Plan</label>
+                    <textarea rows="6" placeholder="Type diagnosis, medication, or treatment notes here..."></textarea>
+                </div>
+
+                <button class="btn btn-save" onclick="saveNotes()">💾 Save Notes & Update Status</button>
+                
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                
+                <button class="btn btn-discharge" onclick="quickDischarge()">✅ Finalize & Discharge</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. Get Patient ID from URL (e.g., doctor_view.html?id=5)
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientId = urlParams.get('id');
+
+        async function loadPatientDetails() {
+            if (!patientId) {
+                alert("No Patient ID provided!");
+                return;
+            }
+
+            try {
+                // Fetch all patients (In real production, you'd fetch /patients/:id)
+                const res = await fetch('/patients');
+                const data = await res.json();
+                const patient = data.find(p => p.patient_id == patientId);
+
+                if (!patient) {
+                    alert("Patient not found!");
+                    return;
+                }
+
+                renderPatient(patient);
+            } catch (err) {
+                console.error("Error loading patient:", err);
+            }
+        }
+
+        function renderPatient(p) {
+            // Header Info
+            document.getElementById('ptName').textContent = p.full_name;
+            document.getElementById('ptID').textContent = p.patient_id;
+            document.getElementById('ptSex').textContent = p.sex;
+            document.getElementById('ptDOB').textContent = p.date_of_birth ? p.date_of_birth.split("T")[0] : "-";
+            
+            // Triage Badge
+            const badge = document.getElementById('triageBadge');
+            const triageLevel = (p.triage_level || "BLUE").toUpperCase();
+            
+            // Color Mapping
+            const colors = {
+                "RED": "var(--color-red)",
+                "ORANGE": "var(--color-orange)",
+                "YELLOW": "var(--color-yellow)",
+                "GREEN": "var(--color-green)",
+                "BLUE": "var(--color-blue)"
+            };
+            badge.style.backgroundColor = colors[triageLevel] || "#666";
+            
+            document.getElementById('ptLevel').textContent = triageLevel;
+            document.getElementById('ptScore').textContent = `Weighted Score: ${p.triage_score || 0}`;
+
+            // Vitals (Handling possible nulls)
+            const v = p.vital || {}; // If your backend sends flattened vital columns, adjust this
+            // Note: Adjust these keys based on your actual API response structure
+            document.getElementById('vBP').textContent = (p.systolic_bp && p.diastolic_bp) ? `${p.systolic_bp}/${p.diastolic_bp}` : "-";
+            document.getElementById('vHR').textContent = p.heart_rate_bpm || "-";
+            document.getElementById('vO2').textContent = p.spo2_percent || "-";
+            document.getElementById('vTemp').textContent = p.temp_c || "-";
+            document.getElementById('vRR').textContent = p.resp_rate_min || "-";
+            document.getElementById('vGCS').textContent = p.gcs_total || "-";
+            document.getElementById('vPain').textContent = p.pain_score || "0";
+
+            // Symptoms & AI
+            document.getElementById('ptSymptoms').textContent = p.symptoms || "No symptoms recorded.";
+            
+            // AI Prediction Display
+            // NOTE: Currently backend might store AI result in 'triage_reason' or separate field. 
+            // Assuming p.ai_analysis exists or using placeholder logic.
+            document.getElementById('aiDisease').textContent = "Analysis Available"; // Placeholder if specific disease field missing
+            
+            // Reasoning List (Split by semicolon if your backend stores it like that)
+            const reasonList = document.getElementById('triageReasoning');
+            reasonList.innerHTML = "";
+            if (p.triage_reason) {
+                const reasons = p.triage_reason.split(';');
+                reasons.forEach(r => {
+                    if(r.trim()) {
+                        const li = document.createElement('li');
+                        li.textContent = r.trim();
+                        reasonList.appendChild(li);
+                    }
+                });
+            } else {
+                reasonList.innerHTML = "<li>No specific automated reasoning logs found.</li>";
+            }
+
+            // Set Status Select
+            document.getElementById('statusSelect').value = p.status_name || "Waiting";
+        }
+
+        // Action: Save Notes
+        async function saveNotes() {
+            const newStatus = document.getElementById('statusSelect').value;
+            
+            // In a real app, you would also send the Textarea content to an API
+            // For now, we just update the status
+            try {
+                const res = await fetch(`/patients/${patientId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (res.ok) {
+                    alert("✅ Clinical notes saved and status updated.");
+                    // Optional: Redirect back to dashboard
+                    // window.location.href = 'dashboard.html';
+                } else {
+                    alert("Error saving data.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Network Error");
+            }
+        }
+
+        // Action: Discharge
+        async function quickDischarge() {
+            if(!confirm("Confirm patient discharge?")) return;
+            document.getElementById('statusSelect').value = "Discharged";
+            saveNotes();
+        }
+
+        // Load on start
+        loadPatientDetails();
+
+    </script>
+</body>
+</html>

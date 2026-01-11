@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ER Department - Live Queue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #554A9D; /* Matching your Dashboard */
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            
+            /* Triage Colors (Standardized) */
+            --color-red: #dc3545;
+            --color-orange: #fd7e14;
+            --color-yellow: #ffc107;
+            --color-green: #28a745;
+            --color-blue: #007bff;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent scrolling on TV screens */
+        }
+
+        /* Header Section */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .hospital-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hospital-logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .brand-text p {
+            margin: 0;
+            font-size: 1rem;
+            font-family: 'Sarabun', sans-serif;
+            opacity: 0.9;
+        }
+
+        .clock-container {
+            text-align: right;
+        }
+
+        #clock-time {
+            font-size: 2rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        #clock-date {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Main Queue Grid */
+        main {
+            flex: 1;
+            padding: 30px 40px;
+            overflow-y: auto;
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .queue-header h2 {
+            margin: 0;
+            color: var(--text-main);
+            font-size: 1.5rem;
+        }
+
+        .queue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        /* Patient Card Design */
+        .patient-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        /* Color Strip on the left */
+        .status-strip {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 12px;
+        }
+
+        .card-content {
+            padding: 20px 20px 20px 32px; /* Left padding accommodates the strip */
+        }
+
+        .queue-number {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .patient-name {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .info-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Triage Specific Styles */
+        .RED .status-strip { background-color: var(--color-red); }
+        .RED .value { color: var(--color-red); }
+        
+        .ORANGE .status-strip { background-color: var(--color-orange); }
+        .ORANGE .value { color: var(--color-orange); }
+
+        .YELLOW .status-strip { background-color: var(--color-yellow); }
+        .YELLOW .value { color: #d39e00; }
+
+        .GREEN .status-strip { background-color: var(--color-green); }
+        .GREEN .value { color: var(--color-green); }
+
+        .BLUE .status-strip { background-color: var(--color-blue); }
+        .BLUE .value { color: var(--color-blue); }
+
+        /* Animation */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer / Ticker */
+        footer {
+            background: white;
+            padding: 10px 40px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-top: 1px solid #ddd;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="hospital-brand">
+            <div class="logo-circle hospital-logo">ER</div>
+            <div class="brand-text">
+                <h1>Emergency Department</h1>
+                <p>Live Patient Status</p>
+            </div>
+        </div>
+        <div class="clock-container">
+            <div id="clock-time">00:00</div>
+            <div id="clock-date">Mon, 01 Jan 2026</div>
+        </div>
+    </header>
+
+    <main>
+        <div class="queue-header">
+            <h2>Waiting List</h2>
+            <div style="font-size: 1rem; color: #666;">
+                Auto-refreshing every 5s <span style="display:inline-block; width: 8px; height: 8px; background: #28a745; border-radius: 50%; margin-left: 5px;"></span>
+            </div>
+        </div>
+        
+        <div id="queue-grid" class="queue-grid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">
+                Loading Queue Data...
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Please present your ID card when your name is called. | กรุณาแสดงบัตรประชาชนเมื่อถึงคิวของท่าน
+    </footer>
+
+    <script>
+        // 1. Clock Logic
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+            const dateString = now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+            
+            document.getElementById('clock-time').textContent = timeString;
+            document.getElementById('clock-date').textContent = dateString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // 2. Queue Logic
+        async function fetchQueue() {
+            try {
+                const res = await fetch("/patients");
+                if (!res.ok) throw new Error("Network response was not ok");
+                
+                const data = await res.json();
+                
+                // Filter only 'Waiting' patients
+                const waitingPatients = data.filter(p => p.status_name === "Waiting");
+
+                // Sort by Priority (Red first) -> Then by Wait time
+                const priorityMap = { "RED": 1, "ORANGE": 2, "YELLOW": 3, "GREEN": 4, "BLUE": 5 };
+                waitingPatients.sort((a, b) => {
+                    const rankA = priorityMap[a.triage_level] || 99;
+                    const rankB = priorityMap[b.triage_level] || 99;
+                    if (rankA === rankB) {
+                        return new Date(a.created_at) - new Date(b.created_at); // First come first serve
+                    }
+                    return rankA - rankB;
+                });
+
+                renderQueue(waitingPatients);
+
+            } catch (err) {
+                console.error("Failed to load queue:", err);
+            }
+        }
+
+        function renderQueue(patients) {
+            const container = document.getElementById("queue-grid");
+            
+            if (patients.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999; font-size: 1.5rem;">No patients in waiting queue</div>`;
+                return;
+            }
+
+            container.innerHTML = ""; // Clear existing
+
+            patients.forEach(p => {
+                // Privacy: "Somsak Dang" -> "Somsak D."
+                const nameParts = (p.full_name || "Unknown").split(" ");
+                const firstName = nameParts[0];
+                const lastInitial = nameParts.length > 1 ? nameParts[1].charAt(0) + "." : "";
+                const displayName = `${firstName} ${lastInitial}`;
+
+                // Wait Time Calc
+                const waitTimeMin = Math.floor((new Date() - new Date(p.updated_at)) / 60000); // Minutes
+                
+                const triageLevel = (p.triage_level || "BLUE").toUpperCase();
+
+                const cardHtml = `
+                    <div class="patient-card ${triageLevel}">
+                        <div class="status-strip"></div>
+                        <div class="card-content">
+                            <div class="queue-number">ID: ${p.patient_id}</div>
+                            <div class="patient-name">${displayName}</div>
+                            
+                            <div class="meta-info">
+                                <div class="info-block">
+                                    <span class="label">Acuity Level</span>
+                                    <span class="value">${triageLevel}</span>
+                                </div>
+                                <div class="info-block" style="text-align: right;">
+                                    <span class="label">Duration</span>
+                                    <span class="value" style="color: #333;">${waitTimeMin} <small style="font-size:0.8rem; font-weight:400;">min</small></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        // Initial Load & Refresh Interval
+        fetchQueue();
+        setInterval(fetchQueue, 5000); // Refresh every 5 seconds
+
+    </script>
+</body>
+</html>
