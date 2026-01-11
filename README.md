@@ -1,6 +1,5 @@
 
-```markdown
-# 🏥 Smart TriagER: AI-Powered Emergency Management System
+ 🏥 Smart TriagER: AI-Powered Emergency Management System
 
 ![Project Status](https://img.shields.io/badge/Status-Active_Development-success)
 ![Version](https://img.shields.io/badge/Version-2.0_Hybrid_AI-blueviolet)
