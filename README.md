@@ -1,11 +1,11 @@
 
- 🏥 Smart TriagER: AI-Powered Emergency Management System
+# 🏥 Smart TriagER: AI-Powered Emergency Management System
 
 ![Project Status](https://img.shields.io/badge/Status-Active_Development-success)
 ![Version](https://img.shields.io/badge/Version-2.0_Hybrid_AI-blueviolet)
 ![Maintainer](https://img.shields.io/badge/Maintainer-Phubase_(Earth)-orange)
 
-**Smart TriagER** is an advanced web-based emergency triage system designed to optimize patient flow in hospital emergency departments. It combines **Clinical Rule-Based Logic** with **Artificial Intelligence (Machine Learning)** to provide accurate, real-time patient prioritization.
+**Smart TriagER** is an advanced web-based emergency triage system designed to optimize patient flow in hospital emergency departments. It combines **Clinical Rule-Based Logic** with **Artificial Intelligence (NLP & Machine Learning)** to provide accurate, real-time patient prioritization.
 
 ---
 
@@ -28,9 +28,31 @@
 
 This updated version introduces **Hybrid Intelligence** to the triage process:
 
-* 🤖 **AI Diagnostic Support:** Utilizes a **Random Forest** model (Python/Scikit-learn) to analyze natural language symptoms and predict potential diseases with ~99% accuracy.
+* 🤖 **AI Diagnostic Support:** Analyzes natural language symptoms to predict potential diseases with ~99% accuracy.
 * ⚖️ **Hybrid Triage Logic:** Combines vital sign weighted scores with AI predictions to prevent under-triage.
 * 🛡️ **Safety Protocols:** Automated alerts for vulnerable groups (Infants, Elderly, Pregnancy complications).
+
+---
+
+## 🧠 AI & NLP Architecture
+
+This system implements **Natural Language Processing (NLP)** techniques for **Text Classification**, allowing the system to "understand" patient symptoms entered in plain English.
+
+### How it works:
+1.  **Text Input:** The system accepts a list of symptoms (e.g., "fever, cough, sore throat").
+2.  **Vectorization (NLP):** We use **Multi-label Binarization** (Bag-of-Words approach) to convert natural language text into machine-readable binary vectors.
+3.  **Classification:** A **Random Forest Classifier** processes these vectors to predict the most likely disease.
+
+**Why this approach?**
+Instead of heavy Deep Learning models, we chose this **Classical NLP + Supervised Learning** approach because it offers:
+* **High Accuracy:** Achieved **~99% AUC Score** on validation sets.
+* **Speed:** Extremely lightweight and fast inference suitable for real-time ER use.
+* **Explainability:** Easier to interpret than "Black Box" Neural Networks.
+
+* **Dataset Source:** [Disease Symptom Prediction](https://www.kaggle.com/datasets/itachi9604/disease-symptom-description-dataset) on Kaggle.
+* **Training Code:** [View Notebook](ai-service/notebooks/disease-prediction.ipynb)
+
+---
 
 ## ✨ Core Features
 
@@ -50,7 +72,7 @@ This updated version introduces **Hybrid Intelligence** to the triage process:
 ### Backend & Database
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white) ![Express.js](https://img.shields.io/badge/Express.js-000000?style=flat&logo=express&logoColor=white) ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)
 
-### AI & Machine Learning
+### AI & Data Science
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white) ![Flask](https://img.shields.io/badge/Flask-000000?style=flat&logo=flask&logoColor=white) ![Scikit-Learn](https://img.shields.io/badge/scikit_learn-F7931E?style=flat&logo=scikit-learn&logoColor=white)
 
 ---
@@ -146,6 +168,7 @@ smart-triager/
 ## 📜 License & Presentation
 
 * [View Original Presentation (Canva)](https://www.google.com/search?q=https://www.canva.com/design/DAGzT25N2dI/8OUC8hlX-5ymR2vhbBlB-A/view)
+* **Dataset Credit:** [Disease Symptom Prediction](https://www.kaggle.com/datasets/itachi9604/disease-symptom-description-dataset) by Kaggle.
 * This project is open-source under the **MIT License**.
 
 ---
